@@ -1,0 +1,33 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+#mensaje {
+  font-weight: bold;
+  color: darkred;
+}
+
+button {
+  margin: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+#botones {
+  margin: 15px 0;
+}
+
+.creditos input {
+  width: 80px;
+  margin-right: 10px;
+}
+
+.acciones {
+  margin-top: 15px;
+}

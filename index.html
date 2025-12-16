@@ -3,208 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <title>Juego La Tinka</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<script>
-/* ===== CANTIDAD DE JUGADORES (MÁX 10) ===== */
-let totalJugadores = Number(prompt("¿Cuántos jugadores participarán? (Máx 10)"));
+  <p id="mensaje"></p>
+  <p id="jugador">Jugador 1</p>
 
-if (isNaN(totalJugadores) || totalJugadores <= 0) {
-  totalJugadores = 1;
-}
+  <div class="creditos">
+    <label>Crédito:</label>
+    <input type="number" id="credito" readonly value="100">
 
-if (totalJugadores > 10) {
-  totalJugadores = 10;
-}
+    <label>Ganado:</label>
+    <input type="number" id="ganado" readonly value="0">
+  </div>
 
-/* ===== JUGADORES ===== */
-let jugadores = [];
-let jugadorActual = 0;
+  <p id="ganadores">Ganadores:</p>
 
-for (let i = 0; i < totalJugadores; i++) {
-  jugadores.push({
-    numeros: [],
-    aciertos: []
-  });
-}
+  <div id="botones"></div>
 
-/* ===== MENSAJES EN PANTALLA ===== */
-const pMensaje = document.createElement("p");
-pMensaje.style.fontWeight = "bold";
-document.body.appendChild(pMensaje);
+  <p id="elegidos">Elegidos:</p>
+  <p id="coincidencias">Coincidencias:</p>
 
-function mostrarMensaje(texto) {
-  pMensaje.textContent = texto;
-}
+  <div class="acciones">
+    <button id="sorteo">Sortear</button>
+    <button id="limpiar">Limpiar</button>
+    <button id="creditoBtn">Crédito</button>
+  </div>
 
-/* ===== INDICADOR JUGADOR ===== */
-const pJugador = document.createElement("p");
-pJugador.textContent = "Jugador 1";
-document.body.appendChild(pJugador);
-
-/* ===== CRÉDITOS ===== */
-const inpCredito = document.createElement("input");
-inpCredito.type = "number";
-inpCredito.readOnly = true;
-inpCredito.value = 100;
-
-const inpGanado = document.createElement("input");
-inpGanado.type = "number";
-inpGanado.readOnly = true;
-inpGanado.value = 0;
-
-document.body.appendChild(inpCredito);
-document.body.appendChild(inpGanado);
-
-/* ===== GANADORES ===== */
-const pGanadores = document.createElement("p");
-pGanadores.textContent = "Ganadores:";
-document.body.appendChild(pGanadores);
-
-/* ===== BOTONES NUMÉRICOS ===== */
-const btn_contenedor = document.createElement("div");
-document.body.appendChild(btn_contenedor);
-
-const pLegido = document.createElement("p");
-pLegido.textContent = "Elegidos:";
-
-const pCoin = document.createElement("p");
-pCoin.textContent = "Coincidencias:";
-
-for (let i = 1; i <= 48; i++) {
-  const boton = document.createElement("button");
-  boton.textContent = i;
-
-  boton.addEventListener("click", () => {
-
-    if (inpCredito.value <= 0) {
-      mostrarMensaje("No tienes créditos");
-      return;
-    }
-
-    let nums = jugadores[jugadorActual].numeros;
-
-    if (nums.length < 6 && !nums.includes(i)) {
-      nums.push(i);
-      boton.disabled = true;
-      pLegido.textContent = "Elegidos: " + nums.join(", ");
-      mostrarMensaje("");
-    }
-
-    if (nums.length === 6) {
-      if (jugadorActual < totalJugadores - 1) {
-        jugadorActual++;
-        pJugador.textContent = "Jugador " + (jugadorActual + 1);
-        pLegido.textContent = "Elegidos:";
-        mostrarMensaje("Turno del jugador " + (jugadorActual + 1));
-
-        const botones = btn_contenedor.querySelectorAll("button");
-        botones.forEach(b => b.disabled = false);
-      } else {
-        mostrarMensaje("Todos los jugadores ya eligieron sus números");
-      }
-    }
-  });
-
-  btn_contenedor.appendChild(boton);
-}
-
-document.body.appendChild(pLegido);
-document.body.appendChild(pCoin);
-
-/* ===== BOTONES ===== */
-const btnSorteo = document.createElement("button");
-btnSorteo.textContent = "Sortear";
-
-const btnLimpiar = document.createElement("button");
-btnLimpiar.textContent = "Limpiar";
-
-const btnCredito = document.createElement("button");
-btnCredito.textContent = "Crédito";
-
-document.body.appendChild(btnSorteo);
-document.body.appendChild(btnLimpiar);
-document.body.appendChild(btnCredito);
-
-/* ===== SORTEO ===== */
-btnSorteo.addEventListener("click", () => {
-
-  if (jugadores.some(j => j.numeros.length < 6)) {
-    mostrarMensaje("Todos los jugadores deben elegir 6 números");
-    return;
-  }
-
-  if (inpCredito.value <= 0) {
-    mostrarMensaje("No tienes créditos");
-    return;
-  }
-
-  inpCredito.value--;
-
-  let lista = Array.from({ length: 48 }, (_, i) => i + 1);
-  let ganadores = [];
-
-  for (let i = 0; i < 6; i++) {
-    let pos = Math.floor(Math.random() * lista.length);
-    ganadores.push(lista[pos]);
-    lista.splice(pos, 1);
-  }
-
-  pGanadores.textContent = "Ganadores: " + ganadores.join(", ");
-
-  let resultado = "";
-
-  jugadores.forEach((jug, index) => {
-    let aciertos = jug.numeros.filter(n => ganadores.includes(n));
-    resultado += `Jugador ${index + 1}: ${aciertos.length} aciertos (${aciertos.join(", ")}) | `;
-
-    if (aciertos.length >= 3) {
-      inpGanado.value = Number(inpGanado.value) + aciertos.length * 10;
-    }
-  });
-
-  pCoin.textContent = resultado;
-  mostrarMensaje("Sorteo realizado");
-});
-
-/* ===== LIMPIAR ===== */
-btnLimpiar.addEventListener("click", () => {
-
-  jugadores.forEach(j => {
-    j.numeros = [];
-    j.aciertos = [];
-  });
-
-  jugadorActual = 0;
-  pJugador.textContent = "Jugador 1";
-  pLegido.textContent = "Elegidos:";
-  pCoin.textContent = "Coincidencias:";
-  pGanadores.textContent = "Ganadores:";
-  mostrarMensaje("Juego reiniciado");
-
-  const botones = btn_contenedor.querySelectorAll("button");
-  botones.forEach(b => b.disabled = false);
-});
-
-/* ===== CRÉDITOS ===== */
-btnCredito.addEventListener("click", () => {
-
-  let dinero = prompt("Ingresa dinero para créditos:");
-
-  if (dinero === null) return;
-
-  dinero = Number(dinero);
-
-  if (dinero <= 0 || isNaN(dinero)) {
-    mostrarMensaje("Monto inválido");
-    return;
-  }
-
-  inpCredito.value = Number(inpCredito.value) + dinero;
-  mostrarMensaje("Créditos añadidos correctamente");
-});
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
