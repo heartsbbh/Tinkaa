@@ -7,9 +7,18 @@
 </head>
 <body>
 
+  <!-- CONFIGURACIÓN -->
+  <div id="configuracion">
+    <label>Cantidad de jugadores (1–10):</label>
+    <input type="number" id="inputJugadores" min="1" max="10" value="1">
+    <button id="btnIniciar">Iniciar juego</button>
+  </div>
+
+  <!-- MENSAJES -->
   <p id="mensaje"></p>
   <p id="jugador">Jugador 1</p>
 
+  <!-- CRÉDITOS -->
   <div class="creditos">
     <label>Crédito:</label>
     <input type="number" id="credito" readonly value="100">
@@ -18,13 +27,16 @@
     <input type="number" id="ganado" readonly value="0">
   </div>
 
+  <!-- RESULTADOS -->
   <p id="ganadores">Ganadores:</p>
 
+  <!-- BOTONES NUMÉRICOS -->
   <div id="botones"></div>
 
   <p id="elegidos">Elegidos:</p>
   <p id="coincidencias">Coincidencias:</p>
 
+  <!-- ACCIONES -->
   <div class="acciones">
     <button id="sorteo">Sortear</button>
     <button id="limpiar">Limpiar</button>
