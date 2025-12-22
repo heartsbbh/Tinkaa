@@ -1,33 +1,123 @@
-body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-#mensaje {
-  font-weight: bold;
-  color: darkred;
+body {
+  margin: 0;
+  padding: 20px;
+  background: #fae900;
+  color: #ffffff;
+  text-align: center;
 }
+
+h3 {
+  color: #f6c400;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+p {
+  background: #0d7200;
+  width: 600px;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 10px auto;   
+  font-weight: bold;
+  text-align: left; 
+}
+
 
 button {
-  margin: 4px;
-  padding: 8px 12px;
+  background: #f6c900;
+  color: #0d7200;
+  font-weight: bold;
+  border: none;
+  padding: 10px 14px;
+  margin: 5px;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #ffd94a;
 }
 
 button:disabled {
-  background-color: #ccc;
+  background: #cccccc;
+  color: #666666;
   cursor: not-allowed;
 }
 
-#botones {
-  margin: 15px 0;
+#divBotones {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
 }
 
-.creditos input {
-  width: 80px;
-  margin-right: 10px;
+#divBotones button {
+  width: 42px;
+  height: 33px;
+  padding: 0;
+  font-size: 14px;
+}
+#listaJugadores {
+  margin: 20px auto;   
+  width: 600px;       
+  max-width: 90%;      
+  background: #ffffff;
+  color: #0b2a5b;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: left;
 }
 
-.acciones {
-  margin-top: 15px;
+.jugador {
+  border-bottom: 1px solid #eaeaea;
+  padding: 10px 0;
+  text-align: left;
+}
+
+.jugador:last-child {
+  border-bottom: none;
+}
+
+#divJugadores {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#modal {
+  background: #ffffff;
+  color: #0b2a5b;
+  padding: 20px;
+  width: 420px;
+  max-width: 90%;
+  border-radius: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#divSeleccionado {
+  background: #eaeaea;
+  font-weight: bold;
+}
+
+#modal button {
+  width: 48%;
+  margin-top: 10px;
 }

@@ -1,105 +1,217 @@
-let totalJugadores = Number(prompt("¿Cuántos jugadores participarán? (Máx 10)"));
-if (isNaN(totalJugadores) || totalJugadores <= 0) totalJugadores = 1;
-if (totalJugadores > 10) totalJugadores = 10;
+/* ===== TEXTOS ===== */
+const pGanador = document.createElement("p");
+pGanador.textContent = "Ganadores:";
+document.body.appendChild(pGanador);
 
+const pBoliyapa = document.createElement("p");
+pBoliyapa.textContent = "Boliyapa:";
+document.body.appendChild(pBoliyapa);
+
+const pSiosi = document.createElement("p");
+pSiosi.textContent = "Si o Si:";
+document.body.appendChild(pSiosi);
+
+
+/* ===== BOTÓN JUGADORES ===== */
+const btnJugadores = document.createElement("button");
+btnJugadores.textContent = "Jugadores";
+document.body.appendChild(btnJugadores);
+
+/* ===== BOTONES PRINCIPALES ===== */
+const btnJugar = document.createElement("button");
+btnJugar.textContent = "Jugar 6";
+document.body.appendChild(btnJugar);
+
+const btnSiosi = document.createElement("button");
+btnSiosi.textContent = "Si o si";
+document.body.appendChild(btnSiosi);
+
+const btnBoliyapa = document.createElement("button");
+btnBoliyapa.textContent = "Boliyapa";
+document.body.appendChild(btnBoliyapa);
+
+/* ===== CONTENEDOR JUGADORES ===== */
+const listaJugadores = document.createElement("div");
+listaJugadores.id = "listaJugadores";
+document.body.appendChild(listaJugadores);
+
+/* ===== MODAL ===== */
+const divJugadores = document.createElement("div");
+divJugadores.id = "divJugadores";
+
+const modal = document.createElement("div");
+modal.id = "modal";
+modal.innerHTML = `
+<h3>Jugador</h3>
+<input type="text" id="txtNombre" placeholder="Nombre"><br><br>
+<div id="divBotones"></div><br>
+<input type="text" id="divSeleccionado" readonly placeholder="Números"><br><br>
+<button id="btnGuardar">Guardar</button>
+<button id="btnCerrar">Cerrar</button>
+`;
+
+divJugadores.appendChild(modal);
+document.body.appendChild(divJugadores);
+
+/* ===== VARIABLES ===== */
+const divBotones = document.getElementById("divBotones");
+const divSeleccionado = document.getElementById("divSeleccionado");
+
+let numerosSeleccionados = [];
 let jugadores = [];
-let jugadorActual = 0;
+let numerosGanadores = [];
+let numeroSiosi = null;
+let ganadoresSiosi = [];
+let numeroBoliyapa = null;
+let ganadoresBoliyapa = [];
 
-for (let i = 0; i < totalJugadores; i++) {
-  jugadores.push({ numeros: [], aciertos: [] });
-}
 
-const mensaje = document.getElementById("mensaje");
-const jugadorTxt = document.getElementById("jugador");
-const credito = document.getElementById("credito");
-const ganado = document.getElementById("ganado");
-const ganadoresTxt = document.getElementById("ganadores");
-const botonesDiv = document.getElementById("botones");
-const elegidosTxt = document.getElementById("elegidos");
-const coincidenciasTxt = document.getElementById("coincidencias");
+/* ===== BOTONES 1 AL 48 ===== */
+for(let i=1;i<=48;i++){
+  const b = document.createElement("button");
+  b.textContent = i;
 
-function mostrarMensaje(txt) {
-  mensaje.textContent = txt;
-}
-
-for (let i = 1; i <= 48; i++) {
-  const btn = document.createElement("button");
-  btn.textContent = i;
-
-  btn.addEventListener("click", () => {
-    if (credito.value <= 0) {
-      mostrarMensaje("No tienes créditos");
+  b.onclick = () => {
+    if(numerosSeleccionados.length >= 6){
+      alert("Solo 6 números");
       return;
     }
+    numerosSeleccionados.push(i);
+    b.disabled = true;
+    divSeleccionado.value = numerosSeleccionados.join(", ");
+  };
 
-    let nums = jugadores[jugadorActual].numeros;
-
-    if (nums.length < 6 && !nums.includes(i)) {
-      nums.push(i);
-      btn.disabled = true;
-      elegidosTxt.textContent = "Elegidos: " + nums.join(", ");
-    }
-
-    if (nums.length === 6) {
-      if (jugadorActual < totalJugadores - 1) {
-        jugadorActual++;
-        jugadorTxt.textContent = "Jugador " + (jugadorActual + 1);
-        elegidosTxt.textContent = "Elegidos:";
-        mostrarMensaje("Turno del jugador " + (jugadorActual + 1));
-        document.querySelectorAll("#botones button").forEach(b => b.disabled = false);
-      }
-    }
-  });
-
-  botonesDiv.appendChild(btn);
+  divBotones.appendChild(b);
 }
 
-document.getElementById("sorteo").addEventListener("click", () => {
-  if (jugadores.some(j => j.numeros.length < 6)) {
-    mostrarMensaje("Todos los jugadores deben elegir 6 números");
+/* ===== GUARDAR JUGADOR ===== */
+document.getElementById("btnGuardar").onclick = () => {
+  const nombre = document.getElementById("txtNombre").value.trim();
+  if(nombre==="" || numerosSeleccionados.length!==6){
+    alert("Completa nombre y 6 números");
     return;
   }
 
-  credito.value--;
-
-  let lista = Array.from({ length: 48 }, (_, i) => i + 1);
-  let ganadores = [];
-
-  for (let i = 0; i < 6; i++) {
-    let pos = Math.floor(Math.random() * lista.length);
-    ganadores.push(lista.splice(pos, 1)[0]);
-  }
-
-  ganadoresTxt.textContent = "Ganadores: " + ganadores.join(", ");
-
-  let resultado = "";
-  jugadores.forEach((j, i) => {
-    let aciertos = j.numeros.filter(n => ganadores.includes(n));
-    resultado += `Jugador ${i + 1}: ${aciertos.length} aciertos (${aciertos.join(", ")}) | `;
-    if (aciertos.length >= 3) ganado.value = Number(ganado.value) + aciertos.length * 10;
+  jugadores.push({
+    nombre,
+    numeros:[...numerosSeleccionados],
+    aciertos:0
   });
 
-  coincidenciasTxt.textContent = resultado;
-  mostrarMensaje("Sorteo realizado");
-});
+  actualizarLista();
 
-document.getElementById("limpiar").addEventListener("click", () => {
-  jugadores.forEach(j => j.numeros = []);
-  jugadorActual = 0;
-  jugadorTxt.textContent = "Jugador 1";
-  elegidosTxt.textContent = "Elegidos:";
-  coincidenciasTxt.textContent = "Coincidencias:";
-  ganadoresTxt.textContent = "Ganadores:";
-  mostrarMensaje("Juego reiniciado");
-  document.querySelectorAll("#botones button").forEach(b => b.disabled = false);
-});
+  // limpiar
+  document.getElementById("txtNombre").value="";
+  divSeleccionado.value="";
+  numerosSeleccionados=[];
+  divBotones.querySelectorAll("button").forEach(b=>b.disabled=false);
+};
 
-document.getElementById("creditoBtn").addEventListener("click", () => {
-  let dinero = Number(prompt("Ingresa dinero para créditos:"));
-  if (dinero > 0) {
-    credito.value = Number(credito.value) + dinero;
-    mostrarMensaje("Créditos añadidos");
-  } else {
-    mostrarMensaje("Monto inválido");
+/* ===== LISTAR JUGADORES ===== */
+function actualizarLista(){
+  listaJugadores.innerHTML = "<h3>Jugadores</h3>";
+  jugadores.forEach(j=>{
+    const div = document.createElement("div");
+    div.className="jugador";
+    div.innerHTML = `
+      <b>${j.nombre}</b><br>
+      Números: ${j.numeros.join(", ")}<br>
+      Coincidencias: ${j.aciertos}<br>
+      Si o Sí: ${
+        numeroSiosi !== null
+          ? (j.numeros.includes(numeroSiosi) ? "Gana" : "X")
+          : "-"
+      }<br>
+      Boliyapa: ${
+        numeroBoliyapa !== null
+        ? (j.numeros.includes(numeroBoliyapa) ? "Gana" : "X")
+      : "-" 
+      }
+    `;
+    listaJugadores.appendChild(div);
+  });
+}
+
+/* ===== JUGAR ===== */
+btnJugar.onclick = () => {
+  numerosGanadores=[];
+  let lista = Array.from({length:48},(_,i)=>i+1);
+
+  for(let i=0;i<6;i++){
+    let r = Math.floor(Math.random()*lista.length);
+    numerosGanadores.push(lista[r]);
+    lista.splice(r,1);
   }
-});
+
+  pGanador.textContent = "Ganadores: " + numerosGanadores.join(", ");
+
+  jugadores.forEach(j=>{
+    j.aciertos = j.numeros.filter(n=>numerosGanadores.includes(n)).length;
+  });
+
+  actualizarLista();
+};
+
+btnSiosi.onclick = () => {
+
+  if(numerosGanadores.length !== 6){
+    alert("Primero debes jugar los 6 números");
+    return;
+  }
+
+  // elegir 1 número de los ganadores
+  numeroSiosi = numerosGanadores[
+    Math.floor(Math.random() * numerosGanadores.length)
+  ];
+
+  ganadoresSiosi = jugadores.filter(j =>
+    j.numeros.includes(numeroSiosi)
+  );
+
+  // mostrar resultado
+  if(ganadoresSiosi.length > 0){
+    pSiosi.textContent =
+      "Si o Si: Número " + numeroSiosi +
+      " | Ganadores: " +
+      ganadoresSiosi.map(j => j.nombre).join(", ");
+  } else {
+    pSiosi.textContent =
+      "Si o Si: Número " + numeroSiosi +
+      " | No hubo ganadores";
+  }
+};
+
+btnBoliyapa.onclick = () => {
+
+  if(jugadores.length === 0){
+    alert("No hay jugadores registrados");
+    return;
+  }
+
+  // sorteo libre del 1 al 48
+  numeroBoliyapa = Math.floor(Math.random() * 48) + 1;
+
+  ganadoresBoliyapa = jugadores.filter(j =>
+    j.numeros.includes(numeroBoliyapa)
+  );
+
+  // mostrar resultado
+  if(ganadoresBoliyapa.length > 0){
+    pBoliyapa.textContent =
+      "Boliyapa: Número " + numeroBoliyapa +
+      " | Ganadores: " +
+      ganadoresBoliyapa.map(j => j.nombre).join(", ");
+  } else {
+    pBoliyapa.textContent =
+      "Boliyapa: Número " + numeroBoliyapa +
+      " | No hubo ganadores";
+  }
+
+  actualizarLista();
+};
+
+
+
+/* ===== MODAL ===== */
+btnJugadores.onclick = ()=> divJugadores.style.display="flex";
+document.getElementById("btnCerrar").onclick = ()=> divJugadores.style.display="none";
